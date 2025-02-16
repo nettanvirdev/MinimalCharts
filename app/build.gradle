@@ -1,15 +1,37 @@
-plugins {
-    alias(libs.plugins.android.application)
+apply plugin: 'com.android.library'
+apply plugin: 'maven-publish'
+
+ext {
+    bintrayRepo = 'maven'
+    bintrayName = 'MinimalCharts'
+
+    publishedGroupId = 'im.dacer'
+    libraryName = 'MinimalCharts'
+    artifact = 'MinimalCharts'
+
+    libraryDescription = 'A library for drawing charts in Android.'
+
+    siteUrl = 'https://github.com/nettanvirdev/MinimalCharts'
+    gitUrl = 'https://github.com/nettanvirdev/MinimalCharts'
+
+    libraryVersion = '1.0.4'
+
+    developerId = 'CeoLevelPixel'
+    developerName = 'Tanvir Ahamed'
+    developerEmail = 'dev@levelpixel.net'
+
+    licenseName = 'The MIT License (MIT)'
+    licenseUrl = 'https://opensource.org/licenses/MIT'
+    allLicenses = ["MIT"]
 }
 
 android {
     namespace 'com.levelpixel.minimalcharts'
-    compileSdk 34
+    compileSdk 33
 
     defaultConfig {
-        applicationId "com.levelpixel.minimalcharts"
-        minSdk 26
-        targetSdk 34
+        minSdk 21
+        targetSdk 33
         versionCode 1
         versionName "1.0"
 
@@ -22,19 +44,46 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
 }
 
-dependencies {
+afterEvaluate {
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = publishedGroupId
+                artifactId = artifact
+                version = libraryVersion
 
-    implementation libs.appcompat
-    implementation libs.material
-    implementation libs.activity
-    implementation libs.constraintlayout
-    testImplementation libs.junit
-    androidTestImplementation libs.ext.junit
-    androidTestImplementation libs.espresso.core
+                // Use the AAR artifact for library publication
+                artifact("$buildDir/outputs/aar/${project.name}-release.aar")
+
+                pom {
+                    name = libraryName
+                    description = libraryDescription
+                    url = siteUrl
+
+                    licenses {
+                        license {
+                            name = licenseName
+                            url = licenseUrl
+                        }
+                    }
+
+                    developers {
+                        developer {
+                            id = developerId
+                            name = developerName
+                            email = developerEmail
+                        }
+                    }
+
+                    scm {
+                        connection = "scm:git:$gitUrl"
+                        developerConnection = "scm:git:$gitUrl"
+                        url = siteUrl
+                    }
+                }
+            }
+        }
+    }
 }
